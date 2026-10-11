@@ -51,6 +51,7 @@ struct Frame {
     std::vector<std::vector<std::string>> rows;
     std::vector<Align>                    aligns;
     bool                                  header_done = false;
+    bool                                  header_set  = false;
 };
 // ───────── 定界符匹配：一次命中的类型、长度与左右可开可闭 ─────────
 struct DelimMatch {
@@ -283,13 +284,7 @@ public:
                 if (!degraded && sl_active()) blk_erase(total);
                 if (!degraded) {
                     if (!f.header_done) {
-                        std::string raw;
-                        for (size_t i = 0; i < f.headers.size(); ++i) {
-                            if (i) raw += " | ";
-                            raw += f.headers[i];
-                        }
-                        emit(raw);
-                        emit("\n");
+                        emit(plain_table(f));
                     } else {
                         emit_block(render_fitted_table(f));
                     }
@@ -437,6 +432,20 @@ public:
         }
         lines.push_back(line);
         return lines;
+    }
+    static std::string plain_table(const Frame& f) {
+        auto join = [](const std::vector<std::string>& cells) {
+            std::string row;
+            for (size_t i = 0; i < cells.size(); ++i) {
+                if (i) row += " | ";
+                row += cells[i];
+            }
+            return row;
+        };
+        std::string out;
+        if (!f.headers.empty()) out += join(f.headers) + "\n";
+        for (auto& r : f.rows) out += join(r) + "\n";
+        return out;
     }
     static std::string render_table(const Frame& f, size_t max_width = 0) {
         size_t cols = f.headers.size();
@@ -911,13 +920,7 @@ private:
                     blk_erase(degraded ? cur : total);
                 if (!degraded) {
                     if (!f.header_done) {
-                        std::string raw;
-                        for (size_t i = 0; i < f.headers.size(); ++i) {
-                            if (i) raw += " | ";
-                            raw += f.headers[i];
-                        }
-                        emit(raw);
-                        emit("\n");
+                        emit(plain_table(f));
                     } else {
                         emit_block(render_fitted_table(f));
                     }
@@ -936,9 +939,12 @@ private:
                 if (is_separator_row(cells)) {
                     top.aligns = parse_aligns(cells);
                     top.header_done = true;
-                } else {
+                } else if (!top.header_set) {
                     top.headers = cells;
+                } else {
+                    top.rows.push_back(cells);
                 }
+                top.header_set = true;
             } else {
                 top.rows.push_back(cells);
             }
@@ -949,6 +955,7 @@ private:
         bool is_close = (p != std::string::npos
                          && line.compare(p, close.size(), close) == 0);
         if (is_close) {
+            std::string tail = line.substr(p + close.size());
             Frame f = std::move(top);
             stack_.pop_back();
             if (!degraded) {
@@ -958,6 +965,13 @@ private:
             }
             blk_rows_      = 0;
             blk_committed_ = false;
+            if (!trim(tail).empty()) {
+                std::string tail_line = tail;
+                if (!raw_line.empty() && raw_line.size() >= tail.size())
+                    tail_line = raw_line.substr(raw_line.size() - tail.size());
+                line_restore(tail_line);
+                feed(tail_line);
+            }
             return;
         }
         blk_rows_ += cur;
