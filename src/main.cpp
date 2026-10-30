@@ -27,6 +27,7 @@ int main() {
     }
 
     std::string current_answer;
+    std::string current_reasoning;
     std::string full_Question;
 
     show_logo();
@@ -63,8 +64,10 @@ int main() {
 
         if (full_Question.empty()) continue;
 
+        // 历史只追加：已发出去的前缀永远不改，服务端才能按前缀命中缓存
         history.push_back({{"role", "user"}, {"content", full_Question}});
         current_answer.clear();
+        current_reasoning.clear();
         // ───────── 流式回复：思考内容走灰色前缀，正文交给 Markdown 渲染器 ─────────
         start_spin();
         bool first = true;
@@ -77,6 +80,7 @@ int main() {
             auto [thinking, content] = parse_one_line(line);
 
             if (!thinking.empty()) {
+                current_reasoning += thinking;
                 if (first) { stop_spin(); first = false; }
                 if (thinking_label) {
                     std::cout << "\033[90m[Thinking] \n" << thinking <<std::flush;
@@ -102,9 +106,16 @@ int main() {
         stop_spin();
         r.finish();
 
-        history.push_back({{"role", "assistant"}, {"content", current_answer}});
+        // 原样写回本轮生成的内容（含思考），下一轮前缀与 KV 缓存中的 token 完全对齐；
+        // 请求失败（什么都没收到）时不写空 assistant，避免污染历史前缀
+        if (!current_answer.empty() || !current_reasoning.empty()) {
+            json assistant = {{"role", "assistant"}, {"content", current_answer}};
+            if (!current_reasoning.empty()) assistant["reasoning_content"] = current_reasoning;
+            history.push_back(std::move(assistant));
+        }
         full_Question.clear();
         current_answer.clear();
+        current_reasoning.clear();
         std::cout << "\n";
     }
     return 0;

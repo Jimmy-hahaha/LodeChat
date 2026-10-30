@@ -109,6 +109,8 @@ API_URL=http://127.0.0.1:8088 API_KEY=<key> ./LodeChat
 
 超时设置为连接 50 秒、读取 600 秒；连接失败或非 200 响应只写日志并在终端提示，不会中断会话。
 
+请求前缀**只追加、不改写**：assistant 消息按服务端返回原样保存（含 `reasoning_content`），请求失败也不会写入空消息。这样每轮发出去的提示词就是上一轮的提示词加上一轮回复，逐字节一致，服务端的前缀缓存才有机会命中。llama.cpp 需要用 `--chat-template-kwargs '{"preserve_thinking": true}'` 启动，历史里的思考内容才会被渲染回 prompt。
+
 ## 内置命令
 
 以 `/` 开头的输入不会被当作提问发出去，也不会进入待发送缓冲区：
@@ -126,7 +128,7 @@ API_URL=http://127.0.0.1:8088 API_KEY=<key> ./LodeChat
 
 ## 日志与渲染
 
-**日志**默认同时写当前目录的 `openai.log` 并打印到终端：
+**日志**默认写在可执行文件所在目录（和 `LodeChat`、`config_tool` 放在一起，通常是 `build/openai.log`），同时打印到终端；用 `LODE_LOG_FILE` 可以指定其他路径。启动时的工作目录不再影响日志位置：
 
 ```text
 [2026-10-01 14:18:07.512] [error] GET /v1/models failed: cannot connect to http://127.0.0.1:8088

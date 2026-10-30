@@ -109,6 +109,8 @@ Request payload:
 
 Timeouts are 50 s for connecting and 600 s for reading; a failed connection or a non-200 response is only logged and reported on the terminal — the session continues.
 
+The prompt prefix is **append-only**: assistant messages are stored exactly as the server produced them (including `reasoning_content`), and a failed request never writes an empty assistant message. Each turn therefore sends the previous prompt plus the previous reply byte-for-byte, which is what server-side prefix caching needs. On llama.cpp, start the server with `--chat-template-kwargs '{"preserve_thinking": true}'` so the reasoning in the history is rendered back into the prompt.
+
 ## Built-in commands
 
 Input starting with `/` is never sent as a question and never enters the pending buffer:
@@ -126,7 +128,7 @@ Line editing has two flavours: on Linux / macOS, GNU readline is used when detec
 
 ## Logging and rendering
 
-**Logging** writes `openai.log` in the current directory and echoes to the terminal:
+**Logging** writes `openai.log` next to the executable (alongside `LodeChat` and `config_tool`, usually `build/openai.log`) and echoes to the terminal; set `LODE_LOG_FILE` to use another path. The directory you launch from no longer affects where the log lands:
 
 ```text
 [2026-10-01 14:18:07.512] [error] GET /v1/models failed: cannot connect to http://127.0.0.1:8088
