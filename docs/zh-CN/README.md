@@ -30,7 +30,7 @@ cmake .. && cmake --build .
 ./LodeChat       # 打印 Logo，等待 >>> 提示符
 ```
 
-构建依赖 CMake ≥ 3.20、支持 C++20 的编译器、OpenSSL 与 Threads；可选 `fmt`（存在时自动启用）、`mold` 链接器（自动探测，也可用 `-DLLMCHAT_LINKER=` 指定，也可设为 `default` 关闭）与 GNU `readline`（Linux / macOS 上自动探测，缺失时回退为 `std::getline`；Windows 不需要）。构建产物：
+构建依赖 CMake ≥ 3.20、支持 C++20 的编译器、OpenSSL 与 Threads；可选 `fmt`（存在时自动启用）、`mold` 链接器（自动探测，也可用 `-DLODECHAT_LINKER=` 指定，也可设为 `default` 关闭）与 GNU `readline`（Linux / macOS 上自动探测，缺失时回退为 `std::getline`；Windows 不需要）。构建产物：
 
 | 可执行文件 | 用途 |
 | --- | --- |
@@ -43,9 +43,9 @@ cmake .. && cmake --build .
 
 | 平台 | 配置目录 |
 | --- | --- |
-| **Linux** | `~/.config/llm-chat`（或 `$XDG_CONFIG_HOME/llm-chat`） |
-| **macOS** | `~/Library/Application Support/llm-chat` |
-| **Windows** | `%APPDATA%\llm-chat`（即 `C:\Users\用户名\AppData\Roaming\llm-chat`） |
+| **Linux** | `~/.config/LodeChat`（或 `$XDG_CONFIG_HOME/LodeChat`） |
+| **macOS** | `~/Library/Application Support/LodeChat` |
+| **Windows** | `%APPDATA%\LodeChat`（即 `C:\Users\用户名\AppData\Roaming\LodeChat`） |
 
 目录下的 `config.json` 全部可用字段：
 
@@ -79,7 +79,7 @@ cmake .. && cmake --build .
 API_URL=http://127.0.0.1:8088 API_KEY=<key> ./LodeChat
 ```
 
-**配置文件查找顺序**：`MYAPP_CONFIG` 环境变量指定的路径 → 用户配置目录 → 可执行文件所在目录 → 当前工作目录。四处都没有时会就近创建一份默认配置，接着在启动流程里问你要 `base_url` 与 `api_key`。
+**配置文件查找顺序**：`LODECHAT_CONFIG` 环境变量指定的路径 → 用户配置目录 → 可执行文件所在目录 → 当前工作目录。四处都没有时会就近创建一份默认配置，接着在启动流程里问你要 `base_url` 与 `api_key`。
 
 ## 运行与使用
 

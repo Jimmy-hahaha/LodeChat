@@ -30,7 +30,7 @@ cmake .. && cmake --build .
 ./LodeChat       # prints the logo and waits for the >>> prompt
 ```
 
-Requires CMake ≥ 3.20, a C++20 compiler, OpenSSL and Threads; optional `fmt` (enabled when present), the `mold` linker (auto-detected, or set `-DLLMCHAT_LINKER=`, including `default` to opt out) and GNU `readline` (auto-detected on Linux / macOS, falling back to `std::getline`; not needed on Windows). Two executables are produced:
+Requires CMake ≥ 3.20, a C++20 compiler, OpenSSL and Threads; optional `fmt` (enabled when present), the `mold` linker (auto-detected, or set `-DLODECHAT_LINKER=`, including `default` to opt out) and GNU `readline` (auto-detected on Linux / macOS, falling back to `std::getline`; not needed on Windows). Two executables are produced:
 
 | Executable | Purpose |
 | --- | --- |
@@ -43,9 +43,9 @@ The config lives in the platform's user config directory, but the executable's d
 
 | Platform | Configuration directory |
 | --- | --- |
-| **Linux** | `~/.config/llm-chat` (or `$XDG_CONFIG_HOME/llm-chat`) |
-| **macOS** | `~/Library/Application Support/llm-chat` |
-| **Windows** | `%APPDATA%\llm-chat` (i.e. `C:\Users\Username\AppData\Roaming\llm-chat`) |
+| **Linux** | `~/.config/LodeChat` (or `$XDG_CONFIG_HOME/LodeChat`) |
+| **macOS** | `~/Library/Application Support/LodeChat` |
+| **Windows** | `%APPDATA%\LodeChat` (i.e. `C:\Users\Username\AppData\Roaming\LodeChat`) |
 
 All available fields in `config.json`:
 
@@ -79,7 +79,7 @@ All available fields in `config.json`:
 API_URL=http://127.0.0.1:8088 API_KEY=<key> ./LodeChat
 ```
 
-**Config file lookup order**: the path given by the `MYAPP_CONFIG` environment variable → the user config directory → the executable's directory → the current working directory. If none of them has a file, a default config is created there and the startup flow then asks you for `base_url` and `api_key`.
+**Config file lookup order**: the path given by the `LODECHAT_CONFIG` environment variable → the user config directory → the executable's directory → the current working directory. If none of them has a file, a default config is created there and the startup flow then asks you for `base_url` and `api_key`.
 
 ## Running and usage
 

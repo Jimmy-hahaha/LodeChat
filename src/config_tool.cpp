@@ -22,7 +22,7 @@ std::string ask(const std::string& label, const std::string& current) {
 int main() {
     init_logger();
 
-    fs::path file = cfg::locateConfigFile("llm-chat");
+    fs::path file = cfg::locateConfigFile("LodeChat");
     if (file.empty()) {
         std::cerr << "unable to determine config path" << std::endl;
         return 1;

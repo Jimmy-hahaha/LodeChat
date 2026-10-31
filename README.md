@@ -46,7 +46,7 @@ mkdir build && cd build
 cmake .. && cmake --build .
 ```
 
-需要 CMake ≥ 3.20、支持 C++20 的编译器、OpenSSL、Threads；可选 `fmt`（存在时自动启用）、`mold` 链接器（自动探测，也可用 `-DLLMCHAT_LINKER=` 指定）与 GNU `readline`（Linux / macOS 自动探测，缺失时回退为普通行输入）。构建产物是 `LodeChat` 与 `config_tool` 两个可执行文件。
+需要 CMake ≥ 3.20、支持 C++20 的编译器、OpenSSL、Threads；可选 `fmt`（存在时自动启用）、`mold` 链接器（自动探测，也可用 `-DLODECHAT_LINKER=` 指定）与 GNU `readline`（Linux / macOS 自动探测，缺失时回退为普通行输入）。构建产物是 `LodeChat` 与 `config_tool` 两个可执行文件。
 
 ### 2. 配置
 

@@ -85,10 +85,10 @@ inline fs::path getUserConfigDir(const std::string& appName) {
 #endif
 }
 
-// ───────── 配置查找：MYAPP_CONFIG → 用户配置目录 → 可执行文件目录 → 当前工作目录 ─────────
+// ───────── 配置查找：LODECHAT_CONFIG → 用户配置目录 → 可执行文件目录 → 当前工作目录 ─────────
 inline fs::path locateConfigFile(const std::string& appName,
                                  const std::string& fileName = "config.json") {
-    if (const char* env = std::getenv("MYAPP_CONFIG")) {
+    if (const char* env = std::getenv("LODECHAT_CONFIG")) {
         if (*env) return fs::path(env);
     }
 
@@ -152,7 +152,7 @@ void log_config_error(const std::string& msg) {
 }
 
 json load_config() {
-    fs::path file = cfg::locateConfigFile("llm-chat");
+    fs::path file = cfg::locateConfigFile("LodeChat");
     if (file.empty()) {
         log_config_error("unable to determine config path");
         return {};
@@ -263,7 +263,7 @@ inline std::string current_model = {};
 inline std::string api_key = {};
 
 inline fs::path config_path() {
-    return cfg::locateConfigFile("llm-chat");
+    return cfg::locateConfigFile("LodeChat");
 }
 
 // ───────── 配置写回：只覆盖四个键，文件中已有的其他键（debug / log_level 等）保持不动 ─────────

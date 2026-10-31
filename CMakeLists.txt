@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(llm-chat
+project(LodeChat
     VERSION 1.0.0
     DESCRIPTION "A minimal LLM chat client"
     LANGUAGES CXX
@@ -19,30 +19,30 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 # ───────── Options ─────────
-set(LLMCHAT_LINKER "auto" CACHE STRING
+set(LODECHAT_LINKER "auto" CACHE STRING
     "Linker backend: auto | mold | default")
-set_property(CACHE LLMCHAT_LINKER PROPERTY STRINGS auto mold default)
+set_property(CACHE LODECHAT_LINKER PROPERTY STRINGS auto mold default)
 
-option(LLMCHAT_USE_PCH "Enable precompiled headers" ON)
+option(LODECHAT_USE_PCH "Enable precompiled headers" ON)
 
 # ───────── Linker selection (mold with graceful fallback) ─────────
-set(_llmchat_use_mold FALSE)
+set(_lodechat_use_mold FALSE)
 
-if(LLMCHAT_LINKER STREQUAL "mold")
+if(LODECHAT_LINKER STREQUAL "mold")
     find_program(MOLD_EXECUTABLE mold)
     if(NOT MOLD_EXECUTABLE)
         message(FATAL_ERROR
-            "LLMCHAT_LINKER=mold requested, but mold was not found. "
-            "Install mold or configure with -DLLMCHAT_LINKER=default.")
+            "LODECHAT_LINKER=mold requested, but mold was not found. "
+            "Install mold or configure with -DLODECHAT_LINKER=default.")
     endif()
-    set(_llmchat_use_mold TRUE)
+    set(_lodechat_use_mold TRUE)
     message(STATUS "Linker: mold (forced) -> ${MOLD_EXECUTABLE}")
 
-elseif(LLMCHAT_LINKER STREQUAL "auto")
+elseif(LODECHAT_LINKER STREQUAL "auto")
     if(UNIX AND NOT APPLE)
         find_program(MOLD_EXECUTABLE mold)
         if(MOLD_EXECUTABLE)
-            set(_llmchat_use_mold TRUE)
+            set(_lodechat_use_mold TRUE)
             message(STATUS "Linker: mold (auto)   -> ${MOLD_EXECUTABLE}")
         else()
             message(STATUS "Linker: system default (mold not found)")
@@ -51,16 +51,16 @@ elseif(LLMCHAT_LINKER STREQUAL "auto")
         message(STATUS "Linker: system default (mold unsupported on this platform)")
     endif()
 
-elseif(LLMCHAT_LINKER STREQUAL "default")
+elseif(LODECHAT_LINKER STREQUAL "default")
     message(STATUS "Linker: system default (requested)")
 
 else()
     message(FATAL_ERROR
-        "Unknown LLMCHAT_LINKER='${LLMCHAT_LINKER}'. "
+        "Unknown LODECHAT_LINKER='${LODECHAT_LINKER}'. "
         "Valid values: auto | mold | default.")
 endif()
 
-if(_llmchat_use_mold)
+if(_lodechat_use_mold)
     if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.29")
         set(CMAKE_LINKER_TYPE MOLD)
     else()
@@ -88,7 +88,7 @@ target_include_directories(config_tool
 )
 
 # ───────── Precompiled headers (opt-in) ─────────
-if(LLMCHAT_USE_PCH)
+if(LODECHAT_USE_PCH)
     target_precompile_headers(LodeChat
         PRIVATE
             <iostream>
